@@ -1,15 +1,16 @@
 package com.samramez.googlemap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.net.InetAddress;
 
 public class Splash extends Activity {
 
@@ -42,8 +43,6 @@ public class Splash extends Activity {
             @Override
             public void run() {
 
-
-
                 if(isInternetAvailable() )
                     openMainActivity();
                 else {
@@ -56,18 +55,14 @@ public class Splash extends Activity {
     }
 
     public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
 
-            if (ipAddr.equals("")) {
-                return false;
-            } else {
-                return true;
-            }
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        } catch (Exception e) {
-            return false;
-        }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
 
     }
 
