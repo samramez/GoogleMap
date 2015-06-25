@@ -41,10 +41,16 @@ public class Splash extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                /* Create an Intent that will start the Menu-Activity. */
-                Intent mainIntent = new Intent(Splash.this, MainActivity.class);
-                Splash.this.startActivity(mainIntent);
-                Splash.this.finish();
+
+
+
+                if(isInternetAvailable() )
+                    openMainActivity();
+                else {
+                    // Hiding the loading View and showing Try Again TextView and Button
+                    tryAgainMode();
+                }
+
             }
         }, SPLASH_DISPLAY_LENGTH);
     }
@@ -67,16 +73,39 @@ public class Splash extends Activity {
 
     public void tryAgainClicked(View view) {
 
-        //TODO: hide some view and show some other
+        loadingMode();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-
-                if(isInternetAvailable()){
-
+                if(isInternetAvailable())
+                    openMainActivity();
+                else{
+                    tryAgainMode();
                 }
             }
         }, SPLASH_DISPLAY_LENGTH);
+    }
+
+    private void openMainActivity(){
+        /* Create an Intent that will start the Menu-Activity. */
+        Intent mainIntent = new Intent(Splash.this, MainActivity.class);
+        Splash.this.startActivity(mainIntent);
+        Splash.this.finish();
+    }
+
+    // make loading image visible and hides the Button and Text
+    private void loadingMode(){
+        loadingImage.setVisibility(View.VISIBLE);
+        tryAgainButton.setVisibility(View.GONE);
+        notConnectedTextView.setVisibility(View.GONE);
+    }
+
+    // Make loading image gone and make Button and text visible
+    private void tryAgainMode(){
+        loadingImage.setVisibility(View.GONE);
+        tryAgainButton.setVisibility(View.VISIBLE);
+        notConnectedTextView.setVisibility(View.VISIBLE);
     }
 }
