@@ -14,17 +14,15 @@ import android.widget.TextView;
 
 public class Splash extends Activity {
 
-    /**
-     * Duration of wait
-     **/
+
+    // Duration of wait
     private final int SPLASH_DISPLAY_LENGTH = 3000;
 
     private Button tryAgainButton;
     private ImageView loadingImage;
     private TextView notConnectedTextView;
-    /**
-     * Called when the activity is first created.
-     */
+
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -35,35 +33,43 @@ public class Splash extends Activity {
         loadingImage = (ImageView) findViewById(R.id.loadingImageView);
         notConnectedTextView = (TextView) findViewById(R.id.notConnectedTextView);
 
+        if(isInternetAvailable())
+            openMainActivityDelayed();
+        else
+            tryAgainModeDelayed();
 
+    }
 
-        /* New Handler to start the Menu-Activity
-         * and close this Splash-Screen after some seconds.*/
+    private void tryAgainModeDelayed() {
+        // New Handler to cause delay in running the code
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                if(isInternetAvailable() )
-                    openMainActivity();
-                else {
-                    // Hiding the loading View and showing Try Again TextView and Button
-                    tryAgainMode();
-                }
-
+                tryAgainMode();
             }
         }, SPLASH_DISPLAY_LENGTH);
     }
 
+    private void openMainActivityDelayed() {
+        // New Handler to cause delay in running the code
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                openMainActivity();
+            }
+        }, SPLASH_DISPLAY_LENGTH);
+    }
+
+    // http://developer.android.com/training/monitoring-device-state/connectivity-monitoring.html
+    // Method to determine internet is conneced or not.
     public boolean isInternetAvailable() {
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         return isConnected;
-
     }
 
     public void tryAgainClicked(View view) {

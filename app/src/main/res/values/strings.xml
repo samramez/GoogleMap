@@ -7,4 +7,9 @@
     <string name="title_activity_splash">Splash</string>
     <string name="notConnected">Not Connected to Internet</string>
     <string name="tryAgain">Try Again</string>
+
+    <string name="client_id">c3c3973ff40a43b7903ecf664209a068</string>
+    <string name="client_secret">bbf6a04a54734959897675b5db85d36e</string>
+    <string name="title_activity_insta_login">InstaLogin</string>
+
 </resources>
