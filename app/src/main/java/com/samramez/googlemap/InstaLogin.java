@@ -7,6 +7,11 @@ import android.view.MenuItem;
 
 public class InstaLogin extends AppCompatActivity {
 
+    /*
+    Adding necessary URLS
+     */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
