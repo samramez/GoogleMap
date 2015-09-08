@@ -1,5 +1,6 @@
 package com.samramez.googlemap;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -73,8 +74,15 @@ public class MainActivity extends FragmentActivity implements
                 if (al.size() != 0) {
                     testTextView.setText(al.get(0).toString());
                 }
+                startPhotoActivity();
+
             }
         });
+    }
+
+    private void startPhotoActivity(){
+        Intent maIntent = new Intent(this, PhotoActivity.class);
+        startActivity(maIntent);
     }
 
 
@@ -150,12 +158,6 @@ public class MainActivity extends FragmentActivity implements
                         .getJSONObject("images")
                         .getJSONObject("low_resolution")
                         .getString("url");
-
-                // Removing the '\' from the link
-                //StringBuilder sb = new StringBuilder(imageLink);
-                //sb.deleteCharAt('\\');
-                //Log.d(ASYNC_TAG, sb.toString());
-
 
                 al.add(imageLink.replace("\\","") );
 
