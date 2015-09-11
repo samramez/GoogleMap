@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,9 +33,9 @@ public class MainActivity extends FragmentActivity implements
 
     private GoogleMap googleMap;
     final String TAG = "myLogs";
-    final String ASYNC_TAG = "********************";
+    //final String ASYNC_TAG = "********************";
 
-    protected static ArrayList<String> al = new ArrayList();
+    protected static ArrayList<String> imageArrayList = new ArrayList();
 
 
     @Override
@@ -71,18 +72,33 @@ public class MainActivity extends FragmentActivity implements
 
                 new getInstagramAsyncTask().execute(latLng);
 
-                if (al.size() != 0) {
-                    testTextView.setText(al.get(0).toString());
+                // Just for test purposes
+                if (imageArrayList.size() != 0) {
+                    testTextView.setText(imageArrayList.get(0));
                 }
-                startPhotoActivity();
+
+
+                if (imageArrayList.size() != 0) {
+                    // send the list of image urls along with the intent
+                    startPhotoActivity(imageArrayList);
+                } else
+                    Toast.makeText(getApplicationContext(), "Please choose a different location!",
+                            Toast.LENGTH_LONG).show();
+
 
             }
         });
     }
 
-    private void startPhotoActivity(){
-        Intent maIntent = new Intent(this, PhotoActivity.class);
-        startActivity(maIntent);
+    /**
+     * Start the photo activity and pass the imageArrayList with it.
+     * @param imageList
+     */
+    private void startPhotoActivity(ArrayList<String> imageList){
+
+        Intent intent = new Intent(this, PhotoActivity.class);
+        intent.putStringArrayListExtra("image_list", imageList);
+        startActivity(intent);
     }
 
 
@@ -98,9 +114,7 @@ public class MainActivity extends FragmentActivity implements
 
             //Log.d(ASYNC_TAG, urlString);
 
-            /*
-            Getting Json response from url http request
-             */
+            // Getting Json response from url http request
             String result = getJsonResponse(urlString);
 
             getImagesLink(result);
@@ -148,7 +162,7 @@ public class MainActivity extends FragmentActivity implements
 
     private void getImagesLink(String result){
 
-        //ArrayList al = new ArrayList();
+        //ArrayList imageArrayList = new ArrayList();
         try {
             JSONObject jObject = new JSONObject(result);
             JSONArray data = jObject.getJSONArray("data"); // get data object
@@ -159,14 +173,14 @@ public class MainActivity extends FragmentActivity implements
                         .getJSONObject("low_resolution")
                         .getString("url");
 
-                al.add(imageLink.replace("\\","") );
+                imageArrayList.add(imageLink.replace("\\", ""));
 
-                //Log.d(ASYNC_TAG, al.get(0).toString());
+                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //return al;
+        //return imageArrayList;
     }
 
 

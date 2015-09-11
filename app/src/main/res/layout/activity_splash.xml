@@ -26,7 +26,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/notConnected"
             android:id="@+id/notConnectedTextView"
-            android:layout_below="@+id/loadingImageView"
             android:layout_centerVertical="true"
             android:gravity="center"
             android:visibility="gone"/>
@@ -36,7 +35,6 @@
             android:layout_height="wrap_content"
             android:text="@string/tryAgain"
             android:id="@+id/tryButton"
-            android:layout_below="@+id/notConnectedTextView"
             android:onClick="tryAgainClicked"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
