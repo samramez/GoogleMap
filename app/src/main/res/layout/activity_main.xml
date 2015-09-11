@@ -6,13 +6,6 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-        <TextView
-            android:id="@+id/jsonResponseTextView"
-            android:text="NO RESPONSE"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map"
             android:layout_width="match_parent"

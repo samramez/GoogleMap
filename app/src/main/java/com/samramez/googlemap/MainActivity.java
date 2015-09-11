@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 public class MainActivity extends FragmentActivity implements
         OnMapReadyCallback {
 
-    TextView testTextView;
 
     private GoogleMap googleMap;
     final String TAG = "myLogs";
@@ -42,8 +40,6 @@ public class MainActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        testTextView = (TextView) findViewById(R.id.jsonResponseTextView);
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -71,12 +67,6 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "onMapLongClick: " + latLng.latitude + "," + latLng.longitude);
 
                 new getInstagramAsyncTask().execute(latLng);
-
-                // Just for test purposes
-                if (imageArrayList.size() != 0) {
-                    testTextView.setText(imageArrayList.get(0));
-                }
-
 
                 if (imageArrayList.size() != 0) {
                     // send the list of image urls along with the intent
@@ -120,8 +110,6 @@ public class MainActivity extends FragmentActivity implements
             getImagesLink(result);
 
             return null;
-
-
         }
 
         @Override
@@ -194,6 +182,6 @@ public class MainActivity extends FragmentActivity implements
         LatLng newYork = new LatLng(40.77560182201292, -73.95034790039062);
         map.addMarker(new MarkerOptions().position(newYork).title("Marker in Sydney"));
         map.moveCamera(CameraUpdateFactory.newLatLng(newYork));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13),200,null);
+        map.animateCamera(CameraUpdateFactory.zoomTo(15),200,null);
     }
 }

@@ -2,6 +2,7 @@ package com.samramez.googlemap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,9 +25,11 @@ import java.util.Random;
 public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.ViewHolder> {
 
     private final FragmentActivity mActivity;
-    private final List<RowInformation> mImageUrlList = new ArrayList<RowInformation>();
+    private final List<RowInfo> imagesRowInfo = new ArrayList<RowInfo>();
     OnItemClickListener mItemClickListener;
-    private ArrayList<String> imageURLs = new ArrayList<String>();
+    private static ArrayList<String> imageURLs = new ArrayList<String>();
+
+    private static ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
 
     public ListAdapterHolder(FragmentActivity mActivity, ArrayList<String> mImageUrls) {
 
@@ -35,8 +38,90 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 
         Log.e("***ListAdapterHolder***", "Image Array size is: " + imageURLs.size());
 
-        // Adds needed info to mImageUrlList List
-        createImageObjectList(imageURLs);
+        new loadImageFromWeb()
+                .execute(arrayListToString(imageURLs));
+
+        // Adds needed info to imagesRowInfo List
+        //createImageObjectList(imageObjects);
+
+        try {
+            Thread.sleep(5000);                 //1000 milliseconds is one second.
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+
+
+    }
+
+    public class loadImageFromWeb extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            Log.e("***ListAdapterHolder***", "params size is: " + params.length);
+            for (String param : params) {
+
+                try {
+                    //ImageView i = (ImageView)findViewById(R.id.image);
+                    Bitmap bitmap = BitmapFactory.decodeStream(
+                            (InputStream) new URL(param).getContent()
+                    );
+
+                    imageObjects.add(bitmap);
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    //return null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //return null;
+                }
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //super.onPostExecute(aVoid);
+
+            Log.e("***ListAdapterHolder***", "ImageObjects size is: " + imageObjects.size());
+            createImageObjectList(imageObjects);
+        }
+
+    }
+
+
+    /**
+     * Create list of image objects
+     */
+    private void createImageObjectList(ArrayList<Bitmap> imageObjects) {
+
+        for (int i = 0; i < imageObjects.size(); i++) {
+
+            final RowInfo mRowInfo = new RowInfo();
+
+            mRowInfo.setImageObject(imageObjects.get(i));
+
+//            mRowInfo.setName("Name " + i);
+//            mRowInfo.setSex((i % 2) == 0 ? "M" : "F");
+//            mRowInfo.setAge(randInt(14, 50));
+
+
+            imagesRowInfo.add(mRowInfo);
+        }
+
+        Log.e("***ListAdapterHolder***", "ImageRowInfo size is: " + imagesRowInfo.size());
+    }
+
+    /**
+     * Method to convert ArrayList<String> to String[]
+     */
+    private String[] arrayListToString(ArrayList<String> list){
+
+        String[] stringArray = new String[list.size()];
+        stringArray = list.toArray(stringArray);
+        return stringArray;
     }
 
     /**
@@ -61,18 +146,17 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder , int position) {
 
+        holder.mImageView.setImageBitmap(imagesRowInfo.get(position).getImageObject());
 
-        holder.mImageView.setImageBitmap(mImageUrlList.get(position).getImageObject());
-
-//        holder.vId.setText("ID: " + mImageUrlList.get(position).getImageObject()  );
-//        holder.vName.setText("Name: " + mImageUrlList.get(position).getName());
-//        holder.vSex.setText("Sex: " + mImageUrlList.get(position).getSex());
-//        holder.vAge.setText("Age: " + mImageUrlList.get(position).getAge());
+//        holder.vId.setText("ID: " + imagesRowInfo.get(position).getImageObject()  );
+//        holder.vName.setText("Name: " + imagesRowInfo.get(position).getName());
+//        holder.vSex.setText("Sex: " + imagesRowInfo.get(position).getSex());
+//        holder.vAge.setText("Age: " + imagesRowInfo.get(position).getAge());
     }
 
     @Override
     public int getItemCount() {
-        return mImageUrlList.size();
+        return imagesRowInfo.size();
     }
 
 
@@ -111,32 +195,12 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
         this.mItemClickListener = mItemClickListener;
     }
 
-    /* ==========This Part is not necessary========= */
 
-    /**
-     * Create list of image objects
-     */
-    private void createImageObjectList(ArrayList<String> imageUrlList) {
-
-        for (int i = 0; i < imageUrlList.size(); i++) {
-
-            final RowInformation mRowInformation = new RowInformation();
-
-            Bitmap d = loadImageFromWebOperations( imageUrlList.get(i) );
-
-            mRowInformation.setImageObject(d);
-
-//            mRowInformation.setName("Name " + i);
-//            mRowInformation.setSex((i % 2) == 0 ? "M" : "F");
-//            mRowInformation.setAge(randInt(14, 50));
-
-
-            mImageUrlList.add(mRowInformation);
-        }
-    }
 
 
     public Bitmap loadImageFromWebOperations(String url) {
+
+
         try {
             //ImageView i = (ImageView)findViewById(R.id.image);
             Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
