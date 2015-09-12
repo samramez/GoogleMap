@@ -45,7 +45,7 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
         //createImageObjectList(imageObjects);
 
         try {
-            Thread.sleep(5000);                 //1000 milliseconds is one second.
+            Thread.sleep(7000);                 //1000 milliseconds is one second.
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
