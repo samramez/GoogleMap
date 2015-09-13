@@ -11,11 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -24,28 +32,33 @@ import java.util.Random;
  */
 public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.ViewHolder> {
 
+
     private final FragmentActivity mActivity;
+
     private final List<RowInfo> imagesRowInfo = new ArrayList<RowInfo>();
+
     OnItemClickListener mItemClickListener;
-    private static ArrayList<String> imageURLs = new ArrayList<String>();
 
-    private static ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
+    private ArrayList<Double> latLongAttr = new ArrayList<Double>();
 
-    public ListAdapterHolder(FragmentActivity mActivity, ArrayList<String> mImageUrls) {
+    /**
+     * Constructor
+     */
+    public ListAdapterHolder(FragmentActivity mActivity, ArrayList<Double> mLatLongAttr) {
 
         this.mActivity = mActivity;
-        this.imageURLs = mImageUrls;
+        this.latLongAttr = mLatLongAttr;
 
-        Log.e("***ListAdapterHolder***", "Image Array size is: " + imageURLs.size());
+        //Log.e("***ListAdapterHolder***", "Image Array size is: " + latLongAttr.size());
 
         new loadImageFromWeb()
-                .execute(arrayListToString(imageURLs));
+                .execute(latLongAttr.get(0),latLongAttr.get(1));
 
         // Adds needed info to imagesRowInfo List
         //createImageObjectList(imageObjects);
 
         try {
-            Thread.sleep(7000);                 //1000 milliseconds is one second.
+            Thread.sleep(10000);                 //1000 milliseconds is one second.
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -53,18 +66,74 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 
     }
 
-    public class loadImageFromWeb extends AsyncTask<String, Void, Void> {
+//    public class loadImageFromWeb extends AsyncTask<String, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(String... params) {
+//
+//            Log.e("***ListAdapterHolder***", "params size is: " + params.length);
+//            for (String param : params) {
+//                try {
+//                    //ImageView i = (ImageView)findViewById(R.id.image);
+//                    Bitmap bitmap = BitmapFactory.decodeStream(
+//                            (InputStream) new URL(param).getContent()
+//                    );
+//
+//                    imageObjects.add(bitmap);
+//
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                }
+//
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            //super.onPostExecute(aVoid);
+//
+//            Log.e("***ListAdapterHolder***", "ImageObjects size is: " + imageObjects.size());
+//            createImageObjectList(imageObjects);
+//        }
+//
+//    }
+
+
+    public class loadImageFromWeb extends AsyncTask<Double, Void, Void> {
+
+        protected ArrayList<String> imageArrayList = new ArrayList();
+
+        private ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Double... latLng) {
 
-            Log.e("***ListAdapterHolder***", "params size is: " + params.length);
-            for (String param : params) {
+            String urlString = "https://api.instagram.com/v1/media/search?lat=";
+            urlString += latLng[0] + "&lng=" ;
+            urlString += latLng[1];
+            urlString += "&access_token=" + "50325870.c3c3973.f6ea1a578d3e44e987d5db2fcf0349da";
 
+            // Getting Json response from url http request
+            String result = getJsonResponse(urlString);
+
+            imageArrayList = getImagesLink(result);
+
+            Log.e("***ListAdapterHolder***", "URL Array size is: " + imageArrayList.size());
+
+            /**
+             * Getting the images
+             */
+
+            for (String link : arrayListToString(imageArrayList)) {
                 try {
                     //ImageView i = (ImageView)findViewById(R.id.image);
                     Bitmap bitmap = BitmapFactory.decodeStream(
-                            (InputStream) new URL(param).getContent()
+                            (InputStream) new URL(link).getContent()
                     );
 
                     imageObjects.add(bitmap);
@@ -78,6 +147,9 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
                 }
 
             }
+
+            Log.e("***ListAdapterHolder***", "Number of Images are: " + imageObjects.size());
+
             return null;
         }
 
@@ -87,9 +159,73 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 
             Log.e("***ListAdapterHolder***", "ImageObjects size is: " + imageObjects.size());
             createImageObjectList(imageObjects);
+
+//            latLongAttr = null;
+//
+//            imageObjects = null;
+//
+//            imageArrayList = null;
+
         }
 
     }
+
+    /**
+     * Gets url attribute and returns the JSON result in a string format
+     */
+    public String getJsonResponse(String urlToRead) {
+        URL url;
+        HttpURLConnection conn;
+        BufferedReader rd;
+        String line;
+        StringBuilder result = new StringBuilder();
+        try {
+            url = new URL(urlToRead);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            rd.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result.toString();
+    }
+
+
+    /**
+     * @return ArrayList of Images Links
+     */
+    private ArrayList<String> getImagesLink(String result){
+
+        ArrayList<String> imageArray = new ArrayList<String>();
+
+        //ArrayList imageArrayList = new ArrayList();
+        try {
+            JSONObject jObject = new JSONObject(result);
+            JSONArray data = jObject.getJSONArray("data"); // get data object
+
+            for(int i=0 ; i < data.length() ; i++){
+                String imageLink = ((JSONObject) data.get(i))
+                        .getJSONObject("images")
+                        .getJSONObject("low_resolution")
+                        .getString("url");
+
+                imageArray.add(imageLink.replace("\\", ""));
+
+                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return imageArray;
+    }
+
+
 
 
     /**
@@ -123,6 +259,28 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
         stringArray = list.toArray(stringArray);
         return stringArray;
     }
+
+//    /**
+//     * Method to convert ArrayList<Double> to double[]
+//     */
+//    private double[] arrayListToDoubleArray(ArrayList list){
+//
+//        double[] doubleArray = new double[list.size()];
+//        doubleArray = list.toArray(doubleArray);
+//        return doubleArray;
+//    }
+
+
+    public static double[] arrayListToDoubleArray(List<Double> doubles)
+    {
+        double[] ret = new double[doubles.size()];
+        Iterator<Double> iterator = doubles.iterator();
+        for(int i = 0; i < ret.length; i++){
+            ret[i] = iterator.next().doubleValue();
+        }
+        return ret;
+    }
+
 
     /**
      * Builds structure of a single row of the RecycleView by using custom_row.xml

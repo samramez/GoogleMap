@@ -1,7 +1,6 @@
 package com.samramez.googlemap;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -14,15 +13,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements
@@ -33,7 +23,9 @@ public class MainActivity extends FragmentActivity implements
     final String TAG = "myLogs";
     //final String ASYNC_TAG = "********************";
 
-    protected static ArrayList<String> imageArrayList = new ArrayList();
+//    protected static ArrayList<String> imageArrayList = new ArrayList();
+//
+//    private static ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
 
 
     @Override
@@ -64,13 +56,16 @@ public class MainActivity extends FragmentActivity implements
 
             @Override
             public void onMapLongClick(LatLng latLng) {
-                Log.d(TAG, "onMapLongClick: " + latLng.latitude + "," + latLng.longitude);
+                Log.e(TAG, "onMapLongClick: " + latLng.latitude + "," + latLng.longitude);
 
-                new getInstagramAsyncTask().execute(latLng);
+                // Creating double array so I can send the latlong attributes to the next Activity
+                double[] latLong = {latLng.latitude, latLng.longitude };
 
-                if (imageArrayList.size() != 0) {
+//                new getInstagramAsyncTask().execute(latLng);
+
+                if (latLong != null) {
                     // send the list of image urls along with the intent
-                    startPhotoActivity(imageArrayList);
+                    startPhotoActivity(latLong);
                 } else
                     Toast.makeText(getApplicationContext(), "Please choose a different location!",
                             Toast.LENGTH_LONG).show();
@@ -80,108 +75,147 @@ public class MainActivity extends FragmentActivity implements
         });
     }
 
+//    /**
+//     * Start the photo activity and pass the imageArrayList with it.
+//     * @param imageList
+//     */
+//    private void startPhotoActivity(ArrayList<Bitmap> imageList){
+//
+//        Intent intent = new Intent(this, PhotoActivity.class);
+//        intent.put("image_list", imageList);
+//        startActivity(intent);
+//    }
+
+
     /**
      * Start the photo activity and pass the imageArrayList with it.
-     * @param imageList
      */
-    private void startPhotoActivity(ArrayList<String> imageList){
+    private void startPhotoActivity(double[] latLong){
 
         Intent intent = new Intent(this, PhotoActivity.class);
-        intent.putStringArrayListExtra("image_list", imageList);
+        intent.putExtra("lat_attribute", latLong[0]);
+        intent.putExtra("long_attribute", latLong[1]);
         startActivity(intent);
     }
 
 
-    class getInstagramAsyncTask extends AsyncTask<LatLng, Void, String>{
-
-        @Override
-        protected String doInBackground(LatLng... latLng) {
-
-            String urlString = "https://api.instagram.com/v1/media/search?lat=";
-            urlString += latLng[0].latitude + "&lng=" ;
-            urlString += latLng[0].longitude;
-            urlString += "&access_token=" + getString(R.string.access_token);
-
-            //Log.d(ASYNC_TAG, urlString);
-
-            // Getting Json response from url http request
-            String result = getJsonResponse(urlString);
-
-            getImagesLink(result);
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-
-            if (response != null){
-                //testTextView.setText(response);
-            }
-        }
-    }
-
-    /*
-    Gets url attribute and returns the JSON result in a string format
-     */
-    public String getJsonResponse(String urlToRead) {
-        URL url;
-        HttpURLConnection conn;
-        BufferedReader rd;
-        String line;
-        StringBuilder result = new StringBuilder();
-        try {
-            url = new URL(urlToRead);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
-            rd.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result.toString();
-    }
 
 
-    private void getImagesLink(String result){
-
-        //ArrayList imageArrayList = new ArrayList();
-        try {
-            JSONObject jObject = new JSONObject(result);
-            JSONArray data = jObject.getJSONArray("data"); // get data object
-
-            for(int i=0 ; i < data.length() ; i++){
-                String imageLink = ((JSONObject) data.get(i))
-                        .getJSONObject("images")
-                        .getJSONObject("low_resolution")
-                        .getString("url");
-
-                imageArrayList.add(imageLink.replace("\\", ""));
-
-                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //return imageArrayList;
-    }
+//    class getInstagramAsyncTask extends AsyncTask<LatLng, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(LatLng... latLng) {
+//
+//            String urlString = "https://api.instagram.com/v1/media/search?lat=";
+//            urlString += latLng[0].latitude + "&lng=" ;
+//            urlString += latLng[0].longitude;
+//            urlString += "&access_token=" + getString(R.string.access_token);
+//
+//            //Log.d(ASYNC_TAG, urlString);
+//
+//            // Getting Json response from url http request
+//            String result = getJsonResponse(urlString);
+//
+//            imageArrayList = getImagesLink(result);
+//
+//            //String[] imageLinkArray =
+//
+//            /**
+//             * Getting the images
+//             */
+//
+//            for (String link : arrayListToString(imageArrayList)) {
+//                try {
+//                    //ImageView i = (ImageView)findViewById(R.id.image);
+//                    Bitmap bitmap = BitmapFactory.decodeStream(
+//                            (InputStream) new URL(link).getContent()
+//                    );
+//
+//                    imageObjects.add(bitmap);
+//
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                }
+//
+//            }
+//
+//            return null;
+//        }
+//    }
 
 
 
+//    private ArrayList<String> getImagesLink(String result){
+//
+//        ArrayList<String> imageArray = new ArrayList<String>();
+//
+//        //ArrayList imageArrayList = new ArrayList();
+//        try {
+//            JSONObject jObject = new JSONObject(result);
+//            JSONArray data = jObject.getJSONArray("data"); // get data object
+//
+//            for(int i=0 ; i < data.length() ; i++){
+//                String imageLink = ((JSONObject) data.get(i))
+//                        .getJSONObject("images")
+//                        .getJSONObject("low_resolution")
+//                        .getString("url");
+//
+//                imageArray.add(imageLink.replace("\\", ""));
+//
+//                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return imageArray;
+//    }
 
+//    /**
+//     * Gets url attribute and returns the JSON result in a string format
+//     */
+//    public String getJsonResponse(String urlToRead) {
+//        URL url;
+//        HttpURLConnection conn;
+//        BufferedReader rd;
+//        String line;
+//        StringBuilder result = new StringBuilder();
+//        try {
+//            url = new URL(urlToRead);
+//            conn = (HttpURLConnection) url.openConnection();
+//            conn.setRequestMethod("GET");
+//            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            while ((line = rd.readLine()) != null) {
+//                result.append(line);
+//            }
+//            rd.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result.toString();
+//    }
 
 
     @Override
     public void onMapReady(GoogleMap map) {
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng newYork = new LatLng(40.77560182201292, -73.95034790039062);
-        map.addMarker(new MarkerOptions().position(newYork).title("Marker in Sydney"));
+        LatLng newYork = new LatLng(40.711462, -74.013184);
+        map.addMarker(new MarkerOptions().position(newYork).title("Marker in New Brunswick"));
         map.moveCamera(CameraUpdateFactory.newLatLng(newYork));
-        map.animateCamera(CameraUpdateFactory.zoomTo(15),200,null);
+        map.animateCamera(CameraUpdateFactory.zoomTo(16),200,null);
+    }
+
+    /**
+     * Method to convert ArrayList<String> to String[]
+     */
+    private String[] arrayListToString(ArrayList<String> list){
+        String[] stringArray = new String[list.size()];
+        stringArray = list.toArray(stringArray);
+        return stringArray;
     }
 }
