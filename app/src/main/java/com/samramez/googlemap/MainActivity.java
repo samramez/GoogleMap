@@ -43,6 +43,8 @@ public class MainActivity extends FragmentActivity implements
 
 
 
+
+
         /*
          Image Links are received at this point
          Now we will put these images in a recycle view

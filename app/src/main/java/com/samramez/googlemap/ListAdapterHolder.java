@@ -1,8 +1,6 @@
 package com.samramez.googlemap;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,17 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,32 +26,60 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 
     OnItemClickListener mItemClickListener;
 
-    private ArrayList<Double> latLongAttr = new ArrayList<Double>();
+//    private ArrayList<Double> latLongAttr = new ArrayList<Double>();
+
+    private ArrayList<Bitmap> imageObjectS = new ArrayList<Bitmap>();
+
 
     /**
      * Constructor
      */
-    public ListAdapterHolder(FragmentActivity mActivity, ArrayList<Double> mLatLongAttr) {
+    public ListAdapterHolder(FragmentActivity mActivity, ArrayList<Bitmap> imageObjects) {
 
         this.mActivity = mActivity;
-        this.latLongAttr = mLatLongAttr;
+        this.imageObjectS = imageObjects;
 
         //Log.e("***ListAdapterHolder***", "Image Array size is: " + latLongAttr.size());
 
-        new loadImageFromWeb()
-                .execute(latLongAttr.get(0),latLongAttr.get(1));
+//        new loadImageFromWeb()
+//                .execute(latLongAttr.get(0), latLongAttr.get(1));
 
         // Adds needed info to imagesRowInfo List
-        //createImageObjectList(imageObjects);
+        createImageObjectList(imageObjectS);
 
-        try {
-            Thread.sleep(10000);                 //1000 milliseconds is one second.
-        } catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            Thread.sleep(10000);                 //1000 milliseconds is one second.
+//        } catch(InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
 
 
     }
+
+
+    /**
+     * Create list of image objects
+     */
+    private void createImageObjectList(ArrayList<Bitmap> imageObjects) {
+
+        for (int i = 0; i < imageObjects.size(); i++) {
+
+            final RowInfo mRowInfo = new RowInfo();
+
+            mRowInfo.setImageObject(imageObjects.get(i));
+
+//            mRowInfo.setName("Name " + i);
+//            mRowInfo.setSex((i % 2) == 0 ? "M" : "F");
+//            mRowInfo.setAge(randInt(14, 50));
+
+
+            imagesRowInfo.add(mRowInfo);
+        }
+
+        Log.e("***ListAdapterHolder***", "ImageRowInfo size is: " + imagesRowInfo.size());
+    }
+
+
 
 //    public class loadImageFromWeb extends AsyncTask<String, Void, Void> {
 //
@@ -104,161 +119,153 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 //    }
 
 
-    public class loadImageFromWeb extends AsyncTask<Double, Void, Void> {
+    /***
+     *  The following AsyncTask is for the time when I combined both AsyncTask in one.
+     */
 
-        protected ArrayList<String> imageArrayList = new ArrayList();
-
-        private ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
-
-        @Override
-        protected Void doInBackground(Double... latLng) {
-
-            String urlString = "https://api.instagram.com/v1/media/search?lat=";
-            urlString += latLng[0] + "&lng=" ;
-            urlString += latLng[1];
-            urlString += "&access_token=" + "50325870.c3c3973.f6ea1a578d3e44e987d5db2fcf0349da";
-
-            // Getting Json response from url http request
-            String result = getJsonResponse(urlString);
-
-            imageArrayList = getImagesLink(result);
-
-            Log.e("***ListAdapterHolder***", "URL Array size is: " + imageArrayList.size());
-
-            /**
-             * Getting the images
-             */
-
-            for (String link : arrayListToString(imageArrayList)) {
-                try {
-                    //ImageView i = (ImageView)findViewById(R.id.image);
-                    Bitmap bitmap = BitmapFactory.decodeStream(
-                            (InputStream) new URL(link).getContent()
-                    );
-
-                    imageObjects.add(bitmap);
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    //return null;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    //return null;
-                }
-
-            }
-
-            Log.e("***ListAdapterHolder***", "Number of Images are: " + imageObjects.size());
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            //super.onPostExecute(aVoid);
-
-            Log.e("***ListAdapterHolder***", "ImageObjects size is: " + imageObjects.size());
-            createImageObjectList(imageObjects);
-
-//            latLongAttr = null;
+//    public class loadImageFromWeb extends AsyncTask<Double, Void, Void> {
 //
-//            imageObjects = null;
+//        protected ArrayList<String> imageArrayList = new ArrayList();
 //
-//            imageArrayList = null;
+//        private ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
+//
+//        @Override
+//        protected Void doInBackground(Double... latLng) {
+//
+//            String urlString = "https://api.instagram.com/v1/media/search?lat=";
+//            urlString += latLng[0] + "&lng=" ;
+//            urlString += latLng[1];
+//            urlString += "&access_token=" + "50325870.c3c3973.f6ea1a578d3e44e987d5db2fcf0349da";
+//
+//            // Getting Json response from url http request
+//            String result = getJsonResponse(urlString);
+//
+//            imageArrayList = getImagesLink(result);
+//
+//            Log.e("***ListAdapterHolder***", "URL Array size is: " + imageArrayList.size());
+//
+//            /**
+//             * Getting the images
+//             */
+//
+//            for (String link : arrayListToString(imageArrayList)) {
+//                try {
+//                    //ImageView i = (ImageView)findViewById(R.id.image);
+//                    Bitmap bitmap = BitmapFactory.decodeStream(
+//                            (InputStream) new URL(link).getContent()
+//                    );
+//
+//                    imageObjects.add(bitmap);
+//
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    //return null;
+//                }
+//
+//            }
+//
+//            Log.e("***ListAdapterHolder***", "Number of Images are: " + imageObjects.size());
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//            super.onPreExecute();
+//
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            //super.onPostExecute(aVoid);
+//
+//            Log.e("***ListAdapterHolder***", "ImageObjects size is: " + imageObjects.size());
+//            createImageObjectList(imageObjects);
+//
+////            latLongAttr = null;
+////
+////            imageObjects = null;
+////
+////            imageArrayList = null;
+//
+//        }
+//
+//    }
 
-        }
-
-    }
-
-    /**
-     * Gets url attribute and returns the JSON result in a string format
-     */
-    public String getJsonResponse(String urlToRead) {
-        URL url;
-        HttpURLConnection conn;
-        BufferedReader rd;
-        String line;
-        StringBuilder result = new StringBuilder();
-        try {
-            url = new URL(urlToRead);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
-            rd.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result.toString();
-    }
-
-
-    /**
-     * @return ArrayList of Images Links
-     */
-    private ArrayList<String> getImagesLink(String result){
-
-        ArrayList<String> imageArray = new ArrayList<String>();
-
-        //ArrayList imageArrayList = new ArrayList();
-        try {
-            JSONObject jObject = new JSONObject(result);
-            JSONArray data = jObject.getJSONArray("data"); // get data object
-
-            for(int i=0 ; i < data.length() ; i++){
-                String imageLink = ((JSONObject) data.get(i))
-                        .getJSONObject("images")
-                        .getJSONObject("low_resolution")
-                        .getString("url");
-
-                imageArray.add(imageLink.replace("\\", ""));
-
-                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return imageArray;
-    }
+//    /**
+//     * Gets url attribute and returns the JSON result in a string format
+//     */
+//    public String getJsonResponse(String urlToRead) {
+//        URL url;
+//        HttpURLConnection conn;
+//        BufferedReader rd;
+//        String line;
+//        StringBuilder result = new StringBuilder();
+//        try {
+//            url = new URL(urlToRead);
+//            conn = (HttpURLConnection) url.openConnection();
+//            conn.setRequestMethod("GET");
+//            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            while ((line = rd.readLine()) != null) {
+//                result.append(line);
+//            }
+//            rd.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result.toString();
+//    }
+//
+//
+//    /**
+//     * @return ArrayList of Images Links
+//     */
+//    private ArrayList<String> getImagesLink(String result){
+//
+//        ArrayList<String> imageArray = new ArrayList<String>();
+//
+//        //ArrayList imageArrayList = new ArrayList();
+//        try {
+//            JSONObject jObject = new JSONObject(result);
+//            JSONArray data = jObject.getJSONArray("data"); // get data object
+//
+//            for(int i=0 ; i < data.length() ; i++){
+//                String imageLink = ((JSONObject) data.get(i))
+//                        .getJSONObject("images")
+//                        .getJSONObject("low_resolution")
+//                        .getString("url");
+//
+//                imageArray.add(imageLink.replace("\\", ""));
+//
+//                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return imageArray;
+//    }
 
 
 
 
-    /**
-     * Create list of image objects
-     */
-    private void createImageObjectList(ArrayList<Bitmap> imageObjects) {
-
-        for (int i = 0; i < imageObjects.size(); i++) {
-
-            final RowInfo mRowInfo = new RowInfo();
-
-            mRowInfo.setImageObject(imageObjects.get(i));
-
-//            mRowInfo.setName("Name " + i);
-//            mRowInfo.setSex((i % 2) == 0 ? "M" : "F");
-//            mRowInfo.setAge(randInt(14, 50));
 
 
-            imagesRowInfo.add(mRowInfo);
-        }
-
-        Log.e("***ListAdapterHolder***", "ImageRowInfo size is: " + imagesRowInfo.size());
-    }
-
-    /**
-     * Method to convert ArrayList<String> to String[]
-     */
-    private String[] arrayListToString(ArrayList<String> list){
-
-        String[] stringArray = new String[list.size()];
-        stringArray = list.toArray(stringArray);
-        return stringArray;
-    }
+//    /**
+//     * Method to convert ArrayList<String> to String[]
+//     */
+//    private String[] arrayListToString(ArrayList<String> list){
+//
+//        String[] stringArray = new String[list.size()];
+//        stringArray = list.toArray(stringArray);
+//        return stringArray;
+//    }
 
 //    /**
 //     * Method to convert ArrayList<Double> to double[]
@@ -355,22 +362,22 @@ public class ListAdapterHolder extends RecyclerView.Adapter<ListAdapterHolder.Vi
 
 
 
-
-    public Bitmap loadImageFromWebOperations(String url) {
-
-
-        try {
-            //ImageView i = (ImageView)findViewById(R.id.image);
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
-            return bitmap;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//
+//    public Bitmap loadImageFromWebOperations(String url) {
+//
+//
+//        try {
+//            //ImageView i = (ImageView)findViewById(R.id.image);
+//            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+//            return bitmap;
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//            return null;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
 
 
