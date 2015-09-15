@@ -2,7 +2,8 @@ package com.samramez.googlemap;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,7 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback {
 
 
@@ -27,11 +28,19 @@ public class MainActivity extends FragmentActivity implements
 //
 //    private static ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
 
+    // Value for the toolbar on the top
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
+        //setSupportActionBar(toolbar);
+
+
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -41,16 +50,13 @@ public class MainActivity extends FragmentActivity implements
 
         onMapLongClicked();
 
-
-
-
-
         /*
          Image Links are received at this point
          Now we will put these images in a recycle view
           */
 
     }
+
 
 
     private void onMapLongClicked() {
@@ -72,6 +78,28 @@ public class MainActivity extends FragmentActivity implements
                     Toast.makeText(getApplicationContext(), "Please choose a different location!",
                             Toast.LENGTH_LONG).show();
 
+
+            }
+        });
+
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                Log.e(TAG, "onMapLongClick: " + latLng.latitude + "," + latLng.longitude);
+
+                // Creating double array so I can send the latlong attributes to the next Activity
+                double[] latLong = {latLng.latitude, latLng.longitude };
+
+//                new getInstagramAsyncTask().execute(latLng);
+
+                if (latLong != null) {
+                    // send the list of image urls along with the intent
+                    startPhotoActivity(latLong);
+                } else
+                    Toast.makeText(getApplicationContext(), "Please choose a different location!",
+                            Toast.LENGTH_LONG).show();
 
             }
         });
