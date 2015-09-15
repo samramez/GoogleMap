@@ -22,11 +22,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private GoogleMap googleMap;
     final String TAG = "myLogs";
-    //final String ASYNC_TAG = "********************";
-
-//    protected static ArrayList<String> imageArrayList = new ArrayList();
-//
-//    private static ArrayList<Bitmap> imageObjects = new ArrayList<Bitmap>();
 
     // Value for the toolbar on the top
     private Toolbar toolbar;
@@ -38,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
-        //setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
 
 
