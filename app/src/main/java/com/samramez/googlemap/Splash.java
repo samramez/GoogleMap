@@ -3,6 +3,7 @@ package com.samramez.googlemap;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,12 +22,21 @@ public class Splash extends Activity {
     private Button tryAgainButton;
     private ImageView loadingImage;
     private TextView notConnectedTextView;
+    private TextView localistTextView;
+
+    private static Context mContext;
+
 
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_splash);
+
+        // Setting font for app logo
+        localistTextView = (TextView) findViewById(R.id.localistaTextView);
+        Typeface custom_font = Typeface.createFromAsset(this.getApplicationContext().getAssets(), "fonts/localista_font.ttf");
+        localistTextView.setTypeface(custom_font);
 
         // Initiating elements
         tryAgainButton = (Button) findViewById(R.id.tryButton);
@@ -38,6 +48,13 @@ public class Splash extends Activity {
         else
             tryAgainModeDelayed();
 
+    }
+
+    /**
+     * @return Current application Context
+     */
+    public static Context getContext() {
+        return mContext;
     }
 
     private void tryAgainModeDelayed() {
