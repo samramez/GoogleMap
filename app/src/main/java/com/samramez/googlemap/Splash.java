@@ -118,6 +118,7 @@ public class Splash extends Activity {
         loadingImage.setVisibility(View.VISIBLE);
         tryAgainButton.setVisibility(View.GONE);
         notConnectedTextView.setVisibility(View.GONE);
+        localistTextView.setVisibility(View.VISIBLE);
     }
 
     // Make loading image gone and make Button and text visible
@@ -125,5 +126,6 @@ public class Splash extends Activity {
         loadingImage.setVisibility(View.GONE);
         tryAgainButton.setVisibility(View.VISIBLE);
         notConnectedTextView.setVisibility(View.VISIBLE);
+        localistTextView.setVisibility(View.INVISIBLE);
     }
 }
