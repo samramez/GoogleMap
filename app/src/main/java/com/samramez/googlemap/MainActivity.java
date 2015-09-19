@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements
         toolbarTitleTextView.setTypeface(custom_font);
 
         // Turning on the sliding option
-        //overridePendingTransition(R.anim.slide_out , R.anim.slide_in);
+        overridePendingTransition(R.anim.slide_enter , R.anim.slide_exit);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
