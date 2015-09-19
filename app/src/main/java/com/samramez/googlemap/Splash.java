@@ -10,17 +10,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Splash extends Activity {
 
 
     // Duration of wait
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 1000;
 
     private Button tryAgainButton;
-    private ImageView loadingImage;
     private TextView notConnectedTextView;
     private TextView localistTextView;
 
@@ -40,7 +38,6 @@ public class Splash extends Activity {
 
         // Initiating elements
         tryAgainButton = (Button) findViewById(R.id.tryButton);
-        loadingImage = (ImageView) findViewById(R.id.loadingImageView);
         notConnectedTextView = (TextView) findViewById(R.id.notConnectedTextView);
 
         if(isInternetAvailable())
@@ -115,7 +112,6 @@ public class Splash extends Activity {
 
     // make loading image visible and hides the Button and Text
     private void loadingMode(){
-        loadingImage.setVisibility(View.VISIBLE);
         tryAgainButton.setVisibility(View.GONE);
         notConnectedTextView.setVisibility(View.GONE);
         localistTextView.setVisibility(View.VISIBLE);
@@ -123,7 +119,6 @@ public class Splash extends Activity {
 
     // Make loading image gone and make Button and text visible
     private void tryAgainMode(){
-        loadingImage.setVisibility(View.GONE);
         tryAgainButton.setVisibility(View.VISIBLE);
         notConnectedTextView.setVisibility(View.VISIBLE);
         localistTextView.setVisibility(View.INVISIBLE);

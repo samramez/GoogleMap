@@ -41,10 +41,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".InstaLogin"
-            android:label="@string/title_activity_insta_login" >
-        </activity>
-        <activity
             android:name=".PhotoActivity"
             android:label="@string/title_activity_photo" >
         </activity>

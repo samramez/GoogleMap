@@ -26,11 +26,26 @@ public class MainActivity extends AppCompatActivity implements
     // Value for the toolbar on the top
     private Toolbar toolbar;
 
+    private static double lat;
+    private static double lon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null){
+            lat = getIntent().getExtras().getDouble("lat_attribute");
+            lon = getIntent().getExtras().getDouble("lang_attribute");
+        } else {
+            lat = 40.711462;
+            lon = -74.013184;
+        }
+
         setContentView(R.layout.activity_main);
+
+        // Turning on the sliding option
+        //overridePendingTransition(R.anim.slide_out , R.anim.slide_in);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
@@ -44,11 +59,6 @@ public class MainActivity extends AppCompatActivity implements
         googleMap = mapFragment.getMap();
 
         onMapLongClicked();
-
-        /*
-         Image Links are received at this point
-         Now we will put these images in a recycle view
-          */
 
     }
 
@@ -124,112 +134,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
-
-//    class getInstagramAsyncTask extends AsyncTask<LatLng, Void, String> {
-//
-//        @Override
-//        protected String doInBackground(LatLng... latLng) {
-//
-//            String urlString = "https://api.instagram.com/v1/media/search?lat=";
-//            urlString += latLng[0].latitude + "&lng=" ;
-//            urlString += latLng[0].longitude;
-//            urlString += "&access_token=" + getString(R.string.access_token);
-//
-//            //Log.d(ASYNC_TAG, urlString);
-//
-//            // Getting Json response from url http request
-//            String result = getJsonResponse(urlString);
-//
-//            imageArrayList = getImagesLink(result);
-//
-//            //String[] imageLinkArray =
-//
-//            /**
-//             * Getting the images
-//             */
-//
-//            for (String link : arrayListToString(imageArrayList)) {
-//                try {
-//                    //ImageView i = (ImageView)findViewById(R.id.image);
-//                    Bitmap bitmap = BitmapFactory.decodeStream(
-//                            (InputStream) new URL(link).getContent()
-//                    );
-//
-//                    imageObjects.add(bitmap);
-//
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                    //return null;
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    //return null;
-//                }
-//
-//            }
-//
-//            return null;
-//        }
-//    }
-
-
-
-//    private ArrayList<String> getImagesLink(String result){
-//
-//        ArrayList<String> imageArray = new ArrayList<String>();
-//
-//        //ArrayList imageArrayList = new ArrayList();
-//        try {
-//            JSONObject jObject = new JSONObject(result);
-//            JSONArray data = jObject.getJSONArray("data"); // get data object
-//
-//            for(int i=0 ; i < data.length() ; i++){
-//                String imageLink = ((JSONObject) data.get(i))
-//                        .getJSONObject("images")
-//                        .getJSONObject("low_resolution")
-//                        .getString("url");
-//
-//                imageArray.add(imageLink.replace("\\", ""));
-//
-//                //Log.d(ASYNC_TAG, imageArrayList.get(0).toString());
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return imageArray;
-//    }
-
-//    /**
-//     * Gets url attribute and returns the JSON result in a string format
-//     */
-//    public String getJsonResponse(String urlToRead) {
-//        URL url;
-//        HttpURLConnection conn;
-//        BufferedReader rd;
-//        String line;
-//        StringBuilder result = new StringBuilder();
-//        try {
-//            url = new URL(urlToRead);
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("GET");
-//            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            while ((line = rd.readLine()) != null) {
-//                result.append(line);
-//            }
-//            rd.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return result.toString();
-//    }
-
-
     @Override
     public void onMapReady(GoogleMap map) {
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng newYork = new LatLng(40.711462, -74.013184);
+        LatLng newYork = new LatLng(lat, lon);
         map.addMarker(new MarkerOptions().position(newYork).title("Marker in New Brunswick"));
         map.moveCamera(CameraUpdateFactory.newLatLng(newYork));
         map.animateCamera(CameraUpdateFactory.zoomTo(16),200,null);
