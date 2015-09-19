@@ -1,10 +1,13 @@
 package com.samramez.googlemap;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements
     private static double lat;
     private static double lon;
 
+    private TextView toolbarTitleTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +49,25 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
+        toolbarTitleTextView = (TextView) findViewById(R.id.toolbar_title);
+        Typeface custom_font = Typeface.createFromAsset(this.getApplicationContext().getAssets(), "fonts/localista_font.ttf");
+        toolbarTitleTextView.setTypeface(custom_font);
+
         // Turning on the sliding option
         //overridePendingTransition(R.anim.slide_out , R.anim.slide_in);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rectangular4));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.toolbar_color));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
 
 
 

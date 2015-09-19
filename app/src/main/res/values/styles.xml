@@ -13,4 +13,6 @@
 
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
 
+    <style name="ToolbarColor">#102942</style>
+
 </resources>
