@@ -1,12 +1,16 @@
 package com.samramez.googlemap;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,31 +33,46 @@ public class MainActivity extends AppCompatActivity implements
     // Value for the toolbar on the top
     private Toolbar toolbar;
 
-    private static double lat;
-    private static double lon;
-
     private TextView toolbarTitleTextView;
+
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private String[] mDrawerItems;
+
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+
+    private double lat;
+    private double lon;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null){
-            lat = getIntent().getExtras().getDouble("lat_attribute");
-            lon = getIntent().getExtras().getDouble("lang_attribute");
-        } else {
-            lat = 40.711462;
-            lon = -74.013184;
-        }
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        lat = getDouble(sharedpreferences, "lat", 40.711462);
+        lon = getDouble(sharedpreferences, "long", -74.013184);
 
         setContentView(R.layout.activity_main);
 
+        // Setting up the drawer layout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerItems = getResources().getStringArray(R.array.drawer_array);
+
+        // set up the drawer's list view with items and click listener
+//        mDrawerList.setAdapter(new ArrayAdapter(this,
+//                R.layout.drawer_list_item, mDrawerItems));
+
+
+
+        // Setting the Font for the title in the Toolbar
         toolbarTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         Typeface custom_font = Typeface.createFromAsset(this.getApplicationContext().getAssets(), "fonts/localista_font.ttf");
         toolbarTitleTextView.setTypeface(custom_font);
 
-        // Turning on the sliding option
+        // Turning on the sliding option from other activities
         overridePendingTransition(R.anim.slide_enter , R.anim.slide_exit);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
@@ -81,6 +100,17 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
+        return edit.putLong(key, Double.doubleToRawLongBits(value));
+    }
+
+    double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
+        if ( !prefs.contains(key))
+            return defaultValue;
+
+        return Double.longBitsToDouble(prefs.getLong(key, 0));
+    }
+
 
 
     private void onMapLongClicked() {
@@ -92,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements
 
                 // Creating double array so I can send the latlong attributes to the next Activity
                 double[] latLong = {latLng.latitude, latLng.longitude };
+
+                // Saving the values in the storage
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                putDouble(editor,"lat", latLong[0]);
+                putDouble(editor,"long", latLong[1]);
+                editor.commit();
 
 //                new getInstagramAsyncTask().execute(latLng);
 
@@ -115,6 +151,12 @@ public class MainActivity extends AppCompatActivity implements
 
                 // Creating double array so I can send the latlong attributes to the next Activity
                 double[] latLong = {latLng.latitude, latLng.longitude };
+
+                // Saving the values in the storage
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                putDouble(editor,"lat", latLong[0]);
+                putDouble(editor,"long", latLong[1]);
+                editor.commit();
 
 //                new getInstagramAsyncTask().execute(latLng);
 
@@ -148,7 +190,9 @@ public class MainActivity extends AppCompatActivity implements
 
         Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra("lat_attribute", latLong[0]);
+        //Log.e("**MAIN ACTIVITY**", "SENT LAT IS : " + latLong[0]);
         intent.putExtra("long_attribute", latLong[1]);
+        //Log.e("**MAIN ACTIVITY**", "SENT LONG IS : " + latLong[1]);
         startActivity(intent);
     }
 
@@ -157,9 +201,11 @@ public class MainActivity extends AppCompatActivity implements
     public void onMapReady(GoogleMap map) {
         // Add a marker in Sydney, Australia, and move the camera.
         LatLng newYork = new LatLng(lat, lon);
+//        Log.e("**MAIN ACTIVITY**", "LAT IS : " + lat);
+//        Log.e("**MAIN ACTIVITY**", "LAT IS : " + lon);
         map.addMarker(new MarkerOptions().position(newYork).title("Marker in New Brunswick"));
         map.moveCamera(CameraUpdateFactory.newLatLng(newYork));
-        map.animateCamera(CameraUpdateFactory.zoomTo(16),200,null);
+        map.animateCamera(CameraUpdateFactory.zoomTo(14),200,null);
     }
 
     /**
