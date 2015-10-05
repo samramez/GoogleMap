@@ -13,6 +13,8 @@
     <string name="access_token">50325870.c3c3973.f6ea1a578d3e44e987d5db2fcf0349da</string>
     <string name="title_activity_insta_login">InstaLogin</string>
     <string name="title_activity_photo">PhotoActivity</string>
+    <string name="navigation_drawer_open">open drawer</string>
+    <string name="navigation_drawer_close">close drawer</string>
 
     <string-array name="drawer_array">
         <item>Favorite Locations</item>

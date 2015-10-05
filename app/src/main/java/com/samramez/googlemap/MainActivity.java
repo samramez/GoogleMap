@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -50,22 +51,12 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+
+        // Using SharedPreferences to load the most recent clicked locations
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         lat = getDouble(sharedpreferences, "lat", 40.711462);
         lon = getDouble(sharedpreferences, "long", -74.013184);
-
-        setContentView(R.layout.activity_main);
-
-        // Setting up the drawer layout
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerItems = getResources().getStringArray(R.array.drawer_array);
-
-        // set up the drawer's list view with items and click listener
-//        mDrawerList.setAdapter(new ArrayAdapter(this,
-//                R.layout.drawer_list_item, mDrawerItems));
-
-
 
         // Setting the Font for the title in the Toolbar
         toolbarTitleTextView = (TextView) findViewById(R.id.toolbar_title);
@@ -78,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rectangular4));
+        //toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.rectangular4));
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbar_color));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +79,35 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+
+        // Setting up the drawer layout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerItems = getResources().getStringArray(R.array.drawer_array);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        ){
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeButtonEnabled(true);
+        mDrawerToggle.syncState();
 
 
         SupportMapFragment mapFragment =
