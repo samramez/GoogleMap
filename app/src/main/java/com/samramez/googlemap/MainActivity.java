@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private String[] mDrawerItems;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs" ;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         toolbarTitleTextView.setTypeface(custom_font);
 
         // Turning on the sliding option from other activities
-        overridePendingTransition(R.anim.slide_enter , R.anim.slide_exit);
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
@@ -84,9 +85,10 @@ public class MainActivity extends AppCompatActivity implements
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         mDrawerItems = getResources().getStringArray(R.array.drawer_array);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+        mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
+                toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         ){
@@ -105,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements
 
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //This shows the hamburger button
+        getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
 
@@ -118,6 +120,20 @@ public class MainActivity extends AppCompatActivity implements
 
         onMapLongClicked();
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
