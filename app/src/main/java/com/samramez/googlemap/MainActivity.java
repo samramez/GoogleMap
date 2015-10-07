@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Setting up the drawer layout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerItems = getResources().getStringArray(R.array.drawer_array);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -111,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
 
+        //Building DrawerLayout contents
+        mDrawerItems = getResources().getStringArray(R.array.drawer_array);
+        DrawerMyAdapter adapter = new DrawerMyAdapter(this, generateData());
+        ListView mListView = (ListView) findViewById(R.id.DrawerListView);
+        mListView.setAdapter(adapter);
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -122,19 +125,32 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+
+    /**
+     * Method to genrate data for the AdapterView
+     * @return
+     */
+    private ArrayList<DrawerModel> generateData(){
+        ArrayList<DrawerModel> models = new ArrayList<DrawerModel>();
+        models.add(new DrawerModel(R.drawable.favourites , mDrawerItems[0]));
+        models.add(new DrawerModel(R.drawable.history , mDrawerItems[1]));
+
+        return models;
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
         return edit.putLong(key, Double.doubleToRawLongBits(value));
@@ -241,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements
 //        Log.e("**MAIN ACTIVITY**", "LAT IS : " + lon);
         map.addMarker(new MarkerOptions().position(newYork).title("Marker in New Brunswick"));
         map.moveCamera(CameraUpdateFactory.newLatLng(newYork));
-        map.animateCamera(CameraUpdateFactory.zoomTo(14),200,null);
+        map.animateCamera(CameraUpdateFactory.zoomTo(12),200,null);
     }
 
     /**
