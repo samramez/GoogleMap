@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
-        android:background="@color/toolbar_color"/>
+        />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/drawerTextView"
@@ -23,7 +23,6 @@
         android:textColor="#fff"
         android:layout_weight="1"
         android:padding="20dp"
-        android:background="@color/toolbar_color"
 
         />
 
